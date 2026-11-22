@@ -1,0 +1,14 @@
+# Build artifacts
+*.bin
+*.elf
+*.map
+build/
+
+# Editor / OS clutter
+.vscode/
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Local bench photos
+relay_wiring.jpg
