@@ -168,6 +168,31 @@ Open `http://greenhouse.local` (or the IP in Serial Monitor), then use
 A `STATUS` line is printed every 5 s, e.g.
 `STATUS soilRaw=4095 lightRaw=0 soil%=0 light%=100 T=23.7 H=57 pump=0 relayInv=0 IN1=1 mode=MANUAL`.
 
+### One-scan setup (WiFi QR + captive portal)
+
+A QR code can hold **either** WiFi credentials **or** a URL, not both in one standard
+code. This project uses the next best thing: scan one WiFi QR, the phone joins the
+ESP32's setup AP, and the firmware's **captive portal** automatically opens the web
+app — no second scan needed.
+
+1. Print or display **`qr/wifi-setup.svg`** (it contains
+   `WIFI:T:nopass;S:GREENHOUSE-SETUP;;`).
+2. Scan it with your phone's camera. It joins the open `GREENHOUSE-SETUP` network.
+3. Within a second or two the phone should detect the portal and open
+   `http://192.168.4.1/` by itself. If it doesn't, open that address manually or
+   scan **`qr/webapp-url.svg`**.
+4. Use **Share → Add to Home Screen**, then set your home WiFi in the app.
+
+Notes:
+
+- The captive portal uses the wildcard DNS server plus redirects for Android/Windows
+  (`/generate_204`, `/connecttest.txt`, `/ncsi.txt`) and Apple
+  (`/hotspot-detect.html`). It only works while the ESP32 is in AP mode.
+- After you save home WiFi, use `http://greenhouse.local` instead; the setup AP is gone.
+- Some phones are fussy about open-network QR codes. If yours won't join, set a
+  password in `WIFI_AP_PASS` in `config.h` and regenerate the QR as
+  `WIFI:T:WPA;S:GREENHOUSE-SETUP;P:yourpassword;;`.
+
 ### HTTP API
 
 | Endpoint | Purpose |

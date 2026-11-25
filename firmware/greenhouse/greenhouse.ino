@@ -571,6 +571,18 @@ void handleScan() {
   server.send(200, "application/json", j);
 }
 
+// Captive portal: phone OS probes these paths when it joins the AP. Sending a
+// redirect (instead of the expected "no portal" answer) makes the OS open the
+// web app automatically after the phone joins GREENHOUSE-SETUP.
+void handleCaptiveRedirect() {
+  server.sendHeader(F("Location"), F("/"));
+  server.send(303);
+}
+
+void handleCaptivePage() {
+  server.send_P(200, "text/html", WEB_APP);
+}
+
 void setupRoutes() {
   server.on(F("/"), HTTP_GET, []() { server.send_P(200, "text/html", WEB_APP); });
   server.on(F("/manifest.webmanifest"), HTTP_GET, []() { server.send_P(200, "application/manifest+json", MANIFEST); });
@@ -579,6 +591,19 @@ void setupRoutes() {
   server.on(F("/api/settings"), HTTP_GET, handleSettings);
   server.on(F("/api/wifi"), HTTP_GET, handleWifi);
   server.on(F("/api/scan"), HTTP_GET, handleScan);
+
+  // Android / Windows / ChromeOS captive-portal probes
+  server.on(F("/generate_204"), HTTP_ANY, handleCaptiveRedirect);
+  server.on(F("/connecttest.txt"), HTTP_ANY, handleCaptiveRedirect);
+  server.on(F("/ncsi.txt"), HTTP_ANY, handleCaptiveRedirect);
+  server.on(F("/fwlink"), HTTP_ANY, handleCaptiveRedirect);
+  server.on(F("/redirect"), HTTP_ANY, handleCaptiveRedirect);
+
+  // Apple captive-portal probes
+  server.on(F("/hotspot-detect.html"), HTTP_ANY, handleCaptivePage);
+  server.on(F("/hotspot.html"), HTTP_ANY, handleCaptivePage);
+  server.on(F("/library/test/success.html"), HTTP_ANY, handleCaptiveRedirect);
+
   server.onNotFound([]() { server.sendHeader(F("Location"), F("/")); server.send(303); });
 }
 

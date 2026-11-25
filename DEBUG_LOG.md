@@ -139,3 +139,12 @@ Firmware state at push time:
 Required before unattended use: move pump `+` to the other output terminal and
 verify the pump is OFF with the relay unpowered, then confirm `p` gives an 8 s run.
 If that fails, replace the relay module or add a 5V logic-level driver.
+
+## QR + captive portal setup (added 2026-11-25)
+
+- Added explicit captive-portal routes for Android/Windows and Apple probe paths;
+  unknown URLs still redirect to `/`. The wildcard DNS server in `startAP()` was
+  already present, so the phone's "sign in to network" prompt now opens the app.
+- Generated `qr/wifi-setup.svg` (WiFi QR for the open `GREENHOUSE-SETUP` AP) and
+  `qr/webapp-url.svg` (URL QR for `http://192.168.4.1/`) as a fallback.
+- Firmware recompiled and uploaded to COM3 successfully.
